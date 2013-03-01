@@ -19,7 +19,7 @@ use lib::abs qw(
 
 use Time::HiRes qw(usleep);
 
-use ETA;
+use Time::ETA;
 
 # global vars
 
@@ -30,7 +30,7 @@ sub main {
 
     my $number = 10;
 
-    my $eta = ETA->new(
+    my $eta = Time::ETA->new(
         milestones => $number,
     );
 
