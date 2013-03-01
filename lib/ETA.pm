@@ -3,6 +3,8 @@ package ETA;
 use warnings;
 use strict;
 
+use Carp;
+
 =head1 NAME
 
 ETA - The great new ETA!
@@ -15,6 +17,8 @@ Version 0.01
 
 our $VERSION = '0.01';
 
+my $true = 1;
+my $false = '';
 
 =head1 SYNOPSIS
 
@@ -27,25 +31,84 @@ Perhaps a little code snippet.
     my $foo = ETA->new();
     ...
 
-=head1 EXPORT
+=head1 METHODS
 
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
-
-=head1 SUBROUTINES/METHODS
-
-=head2 function1
+=head2 new
 
 =cut
 
-sub function1 {
+sub new {
+    my ($class, %params) = @_;
+    my $self = {};
+    bless $self, $class;
+
+    croak "Expected to get parameter 'milestones'. Stopped" if not defined $params{milestones};
+    croak "Parameter 'milestones' should be positive integer. Stopped" if not $self->_is_positive_integer($params{milestones});
+
+    $self->{_milestones} = $params{milestones};
+    $self->{_passed_milestones} = 0;
+    $self->{_start_timestamp} = time;
+
+    return $self;
 }
 
-=head2 function2
+=head2 if_remaining_seconds_is_known
 
 =cut
 
-sub function2 {
+sub if_remaining_seconds_is_known {
+    my ($self) = @_;
+
+    if ($self->{_passed_milestones} > 0) {
+        return $true;
+    } else {
+        return $false;
+    }
+}
+
+=head2 get_remaining_seconds
+
+=cut
+
+sub get_remaining_seconds {
+    my ($self) = @_;
+
+    croak "There is not enough data for calculation estimated time of accomplishment. Stopped" if not $self->if_remaining_seconds_is_known();
+
+    my $current_timestamp = time;
+    my $elapsed_seconds = $current_timestamp - $self->{_start_timestamp};
+    my $left_milestones = $self->{_milestones} - $self->{_passed_milestones};
+
+    my $one_milestone_completion_time = $elapsed_seconds/$self->{_passed_milestones};
+    my $left_seconds = $one_milestone_completion_time * $left_milestones;
+
+    return $left_seconds;
+}
+
+=head2 pass_milestone
+
+=cut
+
+sub pass_milestone {
+    my ($self) = @_;
+
+    $self->{_passed_milestones}++;
+}
+
+sub _is_positive_integer {
+    my ($self, $maybe_number) = @_;
+
+    return $false if $maybe_number eq '0';
+
+    # http://www.perlmonks.org/?node_id=614452
+    my $check_result = $maybe_number =~ m{
+        \A      # beginning of string
+        \+?     # optional plus sign
+        [0-9]+  # mandatory non-zero digit
+        \z      # end of string
+    }xms;
+
+    return $check_result;
 }
 
 =head1 AUTHOR
