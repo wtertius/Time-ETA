@@ -1,53 +1,28 @@
 #!/usr/bin/perl
 
-=encoding UTF-8
-=cut
-
-=head1 DESCRIPTION
-
-=cut
-
-# common modules
 use strict;
 use warnings FATAL => 'all';
-use 5.010;
-use DDP;
-use Carp;
-use lib::abs qw(
-    ../lib
-);
 
-use Time::HiRes qw(usleep);
-
+use v5.010;
+use lib::abs '../lib';
 use Time::ETA;
 
-# global vars
+my $number = 10;
 
-# subs
+my $eta = Time::ETA->new(
+    milestones => $number,
+);
 
-# main
-sub main {
+foreach (1 .. $number) {
 
-    my $number = 10;
-
-    my $eta = Time::ETA->new(
-        milestones => $number,
-    );
-
-    foreach (1 .. $number) {
-
-        if ($eta->if_remaining_seconds_is_known()) {
-            say "ETA: " . $eta->get_remaining_seconds();
-        } else {
-            say "ETA is unknown";
-        }
-
-        sleep 1;
-        $eta->pass_milestone();
+    if ($eta->if_remaining_seconds_is_known()) {
+        say "ETA: " . $eta->get_remaining_seconds();
+    } else {
+        say "ETA is unknown";
     }
 
-    say '#END';
+    sleep 1;
+    $eta->pass_milestone();
 }
 
-main();
-__END__
+say "#END"
