@@ -1,39 +1,42 @@
 package Time::ETA;
 
+# ABSTRACT: calculate estimated time of accomplishment
+
+=head1 SYNOPSIS
+
+    my $number = 10;
+
+    my $eta = Time::ETA->new(
+        milestones => $number,
+    );
+
+    foreach (1 .. $number) {
+
+        if ($eta->if_remaining_seconds_is_known()) {
+            say "ETA: " . $eta->get_remaining_seconds();
+        } else {
+            say "ETA is unknown";
+        }
+
+        sleep 1;
+        $eta->pass_milestone();
+    }
+
+=cut
+
 use warnings;
 use strict;
 
 use Carp;
 
-=head1 NAME
-
-Time::ETA - The great new ETA!
-
-=head1 VERSION
-
-Version 0.01
-
-=cut
-
-our $VERSION = '0.01';
-
 my $true = 1;
 my $false = '';
 
-=head1 SYNOPSIS
-
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
-
-    use Time::ETA;
-
-    my $foo = Time::ETA->new();
-    ...
-
-=head1 METHODS
-
 =head2 new
+
+B<Get:>
+
+B<Return:>
 
 =cut
 
@@ -54,6 +57,10 @@ sub new {
 
 =head2 if_remaining_seconds_is_known
 
+B<Get:>
+
+B<Return:>
+
 =cut
 
 sub if_remaining_seconds_is_known {
@@ -67,6 +74,10 @@ sub if_remaining_seconds_is_known {
 }
 
 =head2 get_remaining_seconds
+
+B<Get:>
+
+B<Return:>
 
 =cut
 
@@ -86,6 +97,10 @@ sub get_remaining_seconds {
 }
 
 =head2 pass_milestone
+
+B<Get:>
+
+B<Return:>
 
 =cut
 
@@ -111,21 +126,23 @@ sub _is_positive_integer {
     return $check_result;
 }
 
-=head1 AUTHOR
+=head1 SEE ALSO
 
-Ivan Bessarabov, C<< <ivan at bessarabov.ru> >>
+=over
+
+=item L<Term::ProgressBar>
+
+=back
+
+=head1 SOURCE CODE
+
+The source code for this module and scripts is hosted on GitHub
+L<https://github.com/bessarabov/Time-ETA>
 
 =head1 BUGS
 
-=head1 LICENSE AND COPYRIGHT
-
-Copyright 2013 Ivan Bessarabov.
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of either: the GNU General Public License as published
-by the Free Software Foundation; or the Artistic License.
-
-See http://dev.perl.org/licenses/ for more information.
+Please report any bugs or feature requests in GitHub Issues
+L<https://github.com/bessarabov/Time-ETA/issues>
 
 =cut
 
