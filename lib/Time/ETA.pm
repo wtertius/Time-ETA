@@ -99,6 +99,22 @@ sub get_remaining_seconds {
     return $left_seconds;
 }
 
+=head2 get_completed_persent
+
+B<Get:>
+
+B<Return:>
+
+=cut
+
+sub get_completed_persent {
+    my ($self) = @_;
+
+    my $completed_percent = (100 * $self->{_passed_milestones}) / $self->{_milestones};
+
+    return $completed_percent;
+}
+
 =head2 pass_milestone
 
 B<Get:>
