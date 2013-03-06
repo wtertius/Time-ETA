@@ -28,6 +28,10 @@ use warnings;
 use strict;
 
 use Carp;
+use Time::HiRes qw(
+    gettimeofday
+    tv_interval
+);
 
 my $true = 1;
 my $false = '';
@@ -50,7 +54,7 @@ sub new {
 
     $self->{_milestones} = $params{milestones};
     $self->{_passed_milestones} = 0;
-    $self->{_start_timestamp} = time;
+    $self->{_start} = [gettimeofday];
 
     return $self;
 }
@@ -86,8 +90,7 @@ sub get_remaining_seconds {
 
     croak "There is not enough data for calculation estimated time of accomplishment. Stopped" if not $self->if_remaining_seconds_is_known();
 
-    my $current_timestamp = time;
-    my $elapsed_seconds = $current_timestamp - $self->{_start_timestamp};
+    my $elapsed_seconds = tv_interval($self->{_start}, [gettimeofday]);
     my $left_milestones = $self->{_milestones} - $self->{_passed_milestones};
 
     my $one_milestone_completion_time = $elapsed_seconds/$self->{_passed_milestones};
