@@ -88,7 +88,7 @@ B<Return:>
 sub get_remaining_seconds {
     my ($self) = @_;
 
-    croak "There is not enough data for calculation estimated time of accomplishment. Stopped" if not $self->if_remaining_seconds_is_known();
+    croak "There is not enough data to calculate estimated time of accomplishment. Stopped" if not $self->if_remaining_seconds_is_known();
 
     my $elapsed_seconds = tv_interval($self->{_start}, [gettimeofday]);
     my $left_milestones = $self->{_milestones} - $self->{_passed_milestones};
