@@ -20,7 +20,7 @@ my $eta = Time::ETA->new(
 );
 
 foreach (1..$count) {
-    if ($eta->if_remaining_seconds_is_known()) {
+    if ($eta->can_calculate_eta()) {
         print
             "Completed "
             . $eta->get_completed_percent()

@@ -46,7 +46,7 @@ foreach my $test (@{$tests}) {
             }
 
             if ($i == 1) {
-                ok(not($current_eta->if_remaining_seconds_is_known()), "In $name object at first iteration we can't calculate ETA");
+                ok(not($current_eta->can_calculate_eta()), "In $name object at first iteration we can't calculate ETA");
 
                 # but if we try to get ETA we will get error
                 eval {

@@ -12,7 +12,7 @@ package Time::ETA;
 
     foreach (1 .. $number) {
 
-        if ($eta->if_remaining_seconds_is_known()) {
+        if ($eta->can_calculate_eta()) {
             say "ETA: " . $eta->get_remaining_seconds();
         } else {
             say "ETA is unknown";
@@ -63,7 +63,7 @@ sub new {
     return $self;
 }
 
-=head2 if_remaining_seconds_is_known
+=head2 can_calculate_eta
 
 B<Get:>
 
@@ -71,7 +71,7 @@ B<Return:>
 
 =cut
 
-sub if_remaining_seconds_is_known {
+sub can_calculate_eta {
     my ($self) = @_;
 
     if ($self->{_passed_milestones} > 0) {
@@ -108,7 +108,7 @@ B<Return:>
 sub get_remaining_seconds {
     my ($self) = @_;
 
-    croak "There is not enough data to calculate estimated time of accomplishment. Stopped" if not $self->if_remaining_seconds_is_known();
+    croak "There is not enough data to calculate estimated time of accomplishment. Stopped" if not $self->can_calculate_eta();
 
     my $elapsed_seconds = $self->get_elapsed_seconds();
     my $left_milestones = $self->{_milestones} - $self->{_passed_milestones};
