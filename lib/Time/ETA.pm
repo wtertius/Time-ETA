@@ -63,24 +63,6 @@ sub new {
     return $self;
 }
 
-=head2 can_calculate_eta
-
-B<Get:>
-
-B<Return:>
-
-=cut
-
-sub can_calculate_eta {
-    my ($self) = @_;
-
-    if ($self->{_passed_milestones} > 0) {
-        return $true;
-    } else {
-        return $false;
-    }
-}
-
 =head2 get_elapsed_seconds
 
 B<Get:>
@@ -147,6 +129,24 @@ sub pass_milestone {
     my ($self) = @_;
 
     $self->{_passed_milestones}++;
+}
+
+=head2 can_calculate_eta
+
+B<Get:>
+
+B<Return:>
+
+=cut
+
+sub can_calculate_eta {
+    my ($self) = @_;
+
+    if ($self->{_passed_milestones} > 0) {
+        return $true;
+    } else {
+        return $false;
+    }
 }
 
 =head2 serialize
