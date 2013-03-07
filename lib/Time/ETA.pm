@@ -40,11 +40,25 @@ my $false = '';
 
 my $serialization_api_version = 1;
 
+=head1 METHODS
+
 =head2 new
 
-B<Get:>
+B<Get:> 1) $class 2) %params
 
-B<Return:>
+B<Return:> 1) $self with Time::ETA object
+
+This is the constructor. It needs one mandatory parameter - the number of
+milestones that should be completed.
+
+Here is the example. Let's imagine that we are generating timetable for the
+next year. We have method generate_month() that is executed for every month.
+To create Time::ETA object that can calculate estimated time of timetable
+generation you need to write:
+
+    my $eta = Time::ETA->new(
+        milestones => 12,
+    );
 
 =cut
 
@@ -65,9 +79,16 @@ sub new {
 
 =head2 get_elapsed_seconds
 
-B<Get:>
+B<Get:> 1) $self
 
-B<Return:>
+B<Return:> 1) $elapsed_seconds - float number
+
+Method return number of seconds that have passed from object creation time.
+
+    print $eta->get_elapsed_seconds();
+
+It can output something like 1.35024 and it means that a bit more than one
+second have passed from the moment the new() constructor has executed.
 
 =cut
 
@@ -81,9 +102,24 @@ sub get_elapsed_seconds {
 
 =head2 get_remaining_seconds
 
-B<Get:>
+B<Get:> 1) $self
 
-B<Return:>
+B<Return:> 1) $elapsed_seconds - float number
+
+Method return estimated seconds how long the process will work.
+
+    print $eta->get_remaining_seconds();
+
+It can return number like 14.872352 that means that the process will end in
+nearly 15 seconds. The accuaccuracy of this time depends on the time lengths
+of every milestone. The more equal milestones time to each other, the more
+precise is the prediction.
+
+This method will die in case it haven't got enough information to calculate
+estimated time of accomplishment. The method will die untill pass_milestone()
+is run for the first time. AFter pass_milestone() run at least once,
+get_remaining_seconds() has enouth data to caluate ETA. To find out if ETA can
+be calculated you can use method can_calculate_eta().
 
 =cut
 
@@ -93,19 +129,29 @@ sub get_remaining_seconds {
     croak "There is not enough data to calculate estimated time of accomplishment. Stopped" if not $self->can_calculate_eta();
 
     my $elapsed_seconds = $self->get_elapsed_seconds();
-    my $left_milestones = $self->{_milestones} - $self->{_passed_milestones};
+    my $remaining_milestones = $self->{_milestones} - $self->{_passed_milestones};
 
     my $one_milestone_completion_time = $elapsed_seconds/$self->{_passed_milestones};
-    my $left_seconds = $one_milestone_completion_time * $left_milestones;
+    my $remaining_seconds = $one_milestone_completion_time * $remaining_milestones;
 
-    return $left_seconds;
+    return $remaining_seconds;
 }
 
 =head2 get_completed_percent
 
-B<Get:>
+B<Get:> 1) $self
 
-B<Return:>
+B<Return:> 1) $completed_percent - float number in the range from zero to 100
+(including zero and 100)
+
+Method returns the percentage of the process completion. It will return 0 if
+no milestones have been passed and it will return 100 if all the milestones
+have been passed.
+
+    $eta->get_completed_percent();
+
+For example, if one milestone from 12 have been completed it will print
+8.33333333333333
 
 =cut
 
@@ -119,9 +165,18 @@ sub get_completed_percent {
 
 =head2 pass_milestone
 
-B<Get:>
+B<Get:> 1) $self
 
-B<Return:>
+B<Return:> it returns nothing that can be used
+
+This method tells the object that one part of the task (called milestone) have
+been completed. You need to run this method as many times as many milestones
+you have specified in the object new() constructor.
+
+    $eta->pass_milestone();
+
+You need to run this method at least once to make method
+get_remaining_seconds() work.
 
 =cut
 
@@ -138,9 +193,23 @@ sub pass_milestone {
 
 =head2 can_calculate_eta
 
-B<Get:>
+B<Get:> 1) $self
 
-B<Return:>
+B<Return:> $boolean
+
+This method returns bool value that that gives information if there is enough
+data in the object to calculate process estimated time of accomplishment.
+
+It will return true value if method pass_milestone() have been run at least
+once, if the method pass_milestone() haven't been run it will return false.
+
+This method is used to check if it is safe to run method
+get_remaining_seconds(). Method get_remaining_seconds() dies in case there is
+no data to calculate ETA.
+
+    if ( $eta->can_calculate_eta() ) {
+        print $eta->get_remaining_seconds();
+    }
 
 =cut
 
@@ -156,9 +225,19 @@ sub can_calculate_eta {
 
 =head2 serialize
 
-B<Get:>
+B<Get:> 1) $self
 
-B<Return:>
+B<Return:> 1) $string with serialized object
+
+Object Time::ETA has build-in serialaztion feature. For example you need to
+store the state of this object in the database. You can run:
+
+    my $string = $eta->serialize();
+
+As a result you will get $string with text data that represents the whole
+object with its state. Then you can store that $string in the database and
+later with the method spawn() to recreate the object in the same state it was
+before the serialization.
 
 =cut
 
@@ -179,9 +258,16 @@ sub serialize {
 
 =head2 spawn
 
-B<Get:>
+B<Get:> 1) $class 2) $string with serialized object
 
-B<Return:>
+B<Return:> 1) $self
+
+This is actually an object constructor. It recieves $string that contaings
+serialized object data and creates an object.
+
+    my $eta = Time::ETA->spawn($string);
+
+The $string is created by the method serialized().
 
 =cut
 
@@ -265,6 +351,8 @@ sub _is_positive_integer {
 =over
 
 =item L<Term::ProgressBar>
+
+=item L<Time::Progress>
 
 =back
 
