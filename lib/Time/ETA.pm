@@ -133,12 +133,13 @@ sub _is_positive_integer {
     my ($self, $maybe_number) = @_;
 
     return $false if $maybe_number eq '0';
+    return $false if $maybe_number eq '+0';
 
     # http://www.perlmonks.org/?node_id=614452
     my $check_result = $maybe_number =~ m{
         \A      # beginning of string
         \+?     # optional plus sign
-        [0-9]+  # mandatory non-zero digit
+        [0-9]+  # mandatory digits, including zero
         \z      # end of string
     }xms;
 
