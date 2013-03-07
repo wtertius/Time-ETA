@@ -31,6 +31,21 @@ foreach my $test (@{$tests}) {
 
         if ($i == 1) {
             ok(not($eta->if_remaining_seconds_is_known()), "At first iteration we can't calculate ETA");
+
+            # but if we try to get ETA we will get error
+            eval {
+                my $value = $eta->get_remaining_seconds();
+            };
+
+            like(
+                $@,
+                qr/There is not enough data to calculate estimated time of accomplishment/,
+                "At first iteration we die if we try to use get_completed_percent()"
+            );
+
+            # but we still know the percent of completion (it is zero)
+            is($eta->get_completed_percent(), 0, "At first iteration we knoe the percent of completion")
+
         } else {
 
             my $percent = $eta->get_completed_percent();
