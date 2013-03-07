@@ -23,7 +23,7 @@ foreach (1..$count) {
     if ($eta->if_remaining_seconds_is_known()) {
         print
             "Completed "
-            . $eta->get_completed_persent()
+            . $eta->get_completed_percent()
             . "%."
             ." Will end in "
             .  $eta->get_remaining_seconds()
