@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 
+use Carp;
 use Time::ETA;
 use Time::HiRes qw(usleep gettimeofday tv_interval);
 use Test::More;
@@ -25,39 +26,55 @@ foreach my $test (@{$tests}) {
     my $eta = Time::ETA->new(
         milestones => $test->{count},
     );
+
     my $start_time = [gettimeofday];
 
     foreach my $i (1..$test->{count}) {
 
-        if ($i == 1) {
-            ok(not($eta->if_remaining_seconds_is_known()), "At first iteration we can't calculate ETA");
+        my $serialization_string = $eta->serialize();
+        my $respawned_eta = Time::ETA->spawn($serialization_string);
 
-            # but if we try to get ETA we will get error
-            eval {
-                my $value = $eta->get_remaining_seconds();
-            };
+        foreach my $name ("original", "respawned") {
+            my $current_eta = $eta;
 
-            like(
-                $@,
-                qr/There is not enough data to calculate estimated time of accomplishment/,
-                "At first iteration we die if we try to use get_completed_percent()"
-            );
+            if ($name eq "original") {
+                $current_eta = $eta;
+            } elsif ($name eq "respawned") {
+                $current_eta = $respawned_eta;
+            } else {
+                croak "Internal error. Stopped";
+            }
 
-            # but we still know the percent of completion (it is zero)
-            is($eta->get_completed_percent(), 0, "At first iteration we knoe the percent of completion")
+            if ($i == 1) {
+                ok(not($current_eta->if_remaining_seconds_is_known()), "In $name object at first iteration we can't calculate ETA");
 
-        } else {
+                # but if we try to get ETA we will get error
+                eval {
+                    my $value = $current_eta->get_remaining_seconds();
+                };
 
-            my $percent = $eta->get_completed_percent();
-            my $secs = $eta->get_remaining_seconds();
+                like(
+                    $@,
+                    qr/There is not enough data to calculate estimated time of accomplishment/,
+                    "In $name object at first iteration we die if we try to use get_completed_percent()"
+                );
 
-            my $number_of_tasks_left = 1 + $test->{count} - $i;
-            my $current_time = [gettimeofday];
-            my $estimated_time = $number_of_tasks_left * ( tv_interval ( $start_time, $current_time) / ($i - 1) );
+                # but we still know the percent of completion (it is zero)
+                is($current_eta->get_completed_percent(), 0, "In $name object at first iteration we know the percent of completion")
 
-            ok(abs($percent - ((100 * ($i - 1) / $test->{count})) ) < $precision, "At loop $i got correct percent $percent");
-            ok(abs($secs - $estimated_time) < $precision, "At loop $i got correct remainig time $secs");
+            } else {
 
+                my $percent = $current_eta->get_completed_percent();
+                my $secs = $current_eta->get_remaining_seconds();
+
+                my $number_of_tasks_left = 1 + $test->{count} - $i;
+                my $current_time = [gettimeofday];
+                my $estimated_time = $number_of_tasks_left * ( tv_interval ( $start_time, $current_time) / ($i - 1) );
+
+                ok(abs($percent - ((100 * ($i - 1) / $test->{count})) ) < $precision, "In $name object at loop $i got correct percent $percent");
+                ok(abs($secs - $estimated_time) < $precision, "In $name object at loop $i got correct remainig time $secs");
+
+            }
         }
 
         usleep $test->{sleep_time};

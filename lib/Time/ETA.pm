@@ -33,8 +33,12 @@ use Time::HiRes qw(
     tv_interval
 );
 
+use YAML;
+
 my $true = 1;
 my $false = '';
+
+my $serialization_api_version = 1;
 
 =head2 new
 
@@ -129,11 +133,89 @@ sub pass_milestone {
     $self->{_passed_milestones}++;
 }
 
-sub _is_positive_integer {
+=head2 serialize
+
+B<Get:>
+
+B<Return:>
+
+=cut
+
+sub serialize {
+    my ($self) = @_;
+
+    my $data = {
+        _version => $serialization_api_version,
+        _milestones => $self->{_milestones},
+        _passed_milestones => $self->{_passed_milestones},
+        _start  => $self->{_start},
+    };
+
+    my $string = Dump($data);
+
+    return $string;
+}
+
+=head2 spawn
+
+B<Get:>
+
+B<Return:>
+
+=cut
+
+sub spawn {
+    my ($class, $string) = @_;
+
+    croak "Can't spawn object. No serialized data specified. Stopped" if not defined $string;
+
+    my $data;
+
+    eval {
+        $data = Load($string);
+    };
+
+    if ($@) {
+        croak "Can't spawn object. Got error from YAML parser:\n" . $@ . "Stopped";
+    }
+
+    croak "Can't spawn object. Got incorrect serialized data. Stopped" if ref $data ne "HASH";
+
+    croak "Can't spawn object. Serialized data does not contain version. Stopped" if not defined $data->{_version};
+
+    croak "Can't spawn object. Version $Time::ETA::VERSION can work only with serialized data version $serialization_api_version. Stopped"
+        if $data->{_version} ne $serialization_api_version;
+
+    croak "Can't spawn object. Serialized data contains incorrect number of milestones. Stopped"
+        if not _is_positive_integer(undef, $data->{_milestones});
+
+    croak "Can't spawn object. Serialized data contains incorrect number of passed milestones. Stopped"
+        if not _is_positive_integer_or_zero(undef, $data->{_passed_milestones});
+
+    croak "Can't spawn object. Serialized data contains incorrect data for start time. Stopped"
+        if ref $data->{_start} ne "ARRAY";
+
+    croak "Can't spawn object. Serialized data contains incorrect seconds in start time. Stopped"
+        if not _is_positive_integer_or_zero(undef, $data->{_start}->[0]);
+
+    croak "Can't spawn object. Serialized data contains incorrect microseconds in start time. Stopped"
+        if not _is_positive_integer_or_zero(undef, $data->{_start}->[1]);
+
+    my $self = {
+        _milestones => $data->{_milestones},
+        _passed_milestones => $data->{_passed_milestones},
+        _start  => $data->{_start},
+    };
+
+    bless $self, $class;
+
+    return $self;
+}
+
+sub _is_positive_integer_or_zero {
     my ($self, $maybe_number) = @_;
 
-    return $false if $maybe_number eq '0';
-    return $false if $maybe_number eq '+0';
+    return $false if not defined $maybe_number;
 
     # http://www.perlmonks.org/?node_id=614452
     my $check_result = $maybe_number =~ m{
@@ -144,6 +226,17 @@ sub _is_positive_integer {
     }xms;
 
     return $check_result;
+}
+
+sub _is_positive_integer {
+    my ($self, $maybe_number) = @_;
+
+    return $false if not defined $maybe_number;
+
+    return $false if $maybe_number eq '0';
+    return $false if $maybe_number eq '+0';
+
+    return _is_positive_integer_or_zero(undef, $maybe_number);
 }
 
 =head1 SEE ALSO
