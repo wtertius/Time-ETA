@@ -88,6 +88,15 @@ foreach my $test (@{$tests}) {
         $eta->pass_milestone();
     }
 
+    eval {
+        $eta->pass_milestone();
+    };
+
+    like(
+        $@,
+        qr/You have already completed all milestones/,
+        "pass_milestone() can't be run after all the work is done",
+    );
 }
 
 done_testing();

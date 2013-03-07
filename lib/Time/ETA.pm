@@ -128,7 +128,12 @@ B<Return:>
 sub pass_milestone {
     my ($self) = @_;
 
-    $self->{_passed_milestones}++;
+    if ($self->{_passed_milestones} < $self->{_milestones}) {
+        $self->{_passed_milestones}++;
+    } else {
+        croak "You have already completed all milestones. It it incorrect to run pass_milestone() now. Stopped";
+    }
+    return $false;
 }
 
 =head2 can_calculate_eta
