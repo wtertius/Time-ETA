@@ -16,7 +16,7 @@ package Time::ETA;
         print "Will work " . $eta->get_remaining_seconds() . " seconds more\n";
     }
 
-=head2 DESCRIPTION
+=head1 DESCRIPTION
 
 You have a long lasting progress that consist of the number of more or less
 equal tasks. You need to calculate when the progress will finish. This module
