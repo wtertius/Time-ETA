@@ -4,23 +4,42 @@ package Time::ETA;
 
 =head1 SYNOPSIS
 
-    my $number = 10;
+    use Time::ETA;
 
     my $eta = Time::ETA->new(
-        milestones => $number,
+        milestones => 12,
     );
 
-    foreach (1 .. $number) {
-
-        if ($eta->can_calculate_eta()) {
-            say "ETA: " . $eta->get_remaining_seconds();
-        } else {
-            say "ETA is unknown";
-        }
-
-        sleep 1;
+    foreach (1..12) {
+        do_work();
         $eta->pass_milestone();
+        print "Will work " . $eta->get_remaining_seconds() . " seconds more\n";
     }
+
+=head2 DESCRIPTION
+
+You have a long lasting progress that consist of the number of more or less
+equal tasks. You need to calculate when the progress will finish. This module
+is designed to solve this task.
+
+Time::ETA is designed to work with the programms that don't output anything
+to user console. This module is created to calculate ETA in cron scripts and
+background running programms. If you need an easy way to output process
+progress in terminal, please look at the exelent L<Term::ProgressBar>.
+
+To work with Time::ETA you need to create object with constructor new().
+
+Then you run your tasks (just execute subs that containg the code of that
+tasks) and after each task you run pass_milestone() method to tell Time::ETA
+object that you have completed part of your process.
+
+Any time in you programme you can use methods to understand what is going on
+and how soon the process will finish. That are methods
+get_completed_percent(), get_elapsed_seconds(), get_remaining_seconds().
+
+This module has build-in feature for serialisation. You can run method
+serialize() to get the text string with the object state. And you can restore
+your object from that string with spawn() method.
 
 =cut
 
