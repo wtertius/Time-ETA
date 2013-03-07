@@ -60,12 +60,18 @@ foreach my $test (@{$tests}) {
                 );
 
                 # but we still know the percent of completion (it is zero)
-                is($current_eta->get_completed_percent(), 0, "In $name object at first iteration we know the percent of completion")
+                is($current_eta->get_completed_percent(), 0, "In $name object at first iteration we know the percent of completion");
+
+                ok(
+                    abs(tv_interval ( $start_time, [gettimeofday]) - $current_eta->get_elapsed_seconds()) < $precision,
+                    "In $name object at first iteration elapsed seconds are very small"
+                );
 
             } else {
 
                 my $percent = $current_eta->get_completed_percent();
                 my $secs = $current_eta->get_remaining_seconds();
+                my $elapsed_seconds = $current_eta->get_elapsed_seconds();
 
                 my $number_of_tasks_left = 1 + $test->{count} - $i;
                 my $current_time = [gettimeofday];
@@ -74,6 +80,7 @@ foreach my $test (@{$tests}) {
                 ok(abs($percent - ((100 * ($i - 1) / $test->{count})) ) < $precision, "In $name object at loop $i got correct percent $percent");
                 ok(abs($secs - $estimated_time) < $precision, "In $name object at loop $i got correct remainig time $secs");
 
+                ok(abs(tv_interval ( $start_time, $current_time) - $elapsed_seconds) < $precision, "In $name object at loop $i got correct elapsed seconds $elapsed_seconds");
             }
         }
 

@@ -81,6 +81,22 @@ sub if_remaining_seconds_is_known {
     }
 }
 
+=head2 get_elapsed_seconds
+
+B<Get:>
+
+B<Return:>
+
+=cut
+
+sub get_elapsed_seconds {
+    my ($self) = @_;
+
+    my $elapsed_seconds = tv_interval($self->{_start}, [gettimeofday]);
+
+    return $elapsed_seconds;
+}
+
 =head2 get_remaining_seconds
 
 B<Get:>
@@ -94,7 +110,7 @@ sub get_remaining_seconds {
 
     croak "There is not enough data to calculate estimated time of accomplishment. Stopped" if not $self->if_remaining_seconds_is_known();
 
-    my $elapsed_seconds = tv_interval($self->{_start}, [gettimeofday]);
+    my $elapsed_seconds = $self->get_elapsed_seconds();
     my $left_milestones = $self->{_milestones} - $self->{_passed_milestones};
 
     my $one_milestone_completion_time = $elapsed_seconds/$self->{_passed_milestones};
