@@ -371,6 +371,10 @@ sub _is_positive_integer {
 
 =item L<PBS::ProgressBar>
 
+=item L<Progress::Any>
+
+=item L<Progress::PV>
+
 =item L<Term::ProgressBar::Quiet>
 
 =item L<Term::ProgressBar::Simple>
