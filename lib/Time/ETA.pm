@@ -369,7 +369,15 @@ sub _is_positive_integer {
 
 =over
 
+=item L<PBS::ProgressBar>
+
+=item L<Term::ProgressBar::Quiet>
+
+=item L<Term::ProgressBar::Simple>
+
 =item L<Term::ProgressBar>
+
+=item L<Text::ProgressBar::ETA>
 
 =item L<Time::Progress>
 
