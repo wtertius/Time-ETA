@@ -34,7 +34,7 @@ tasks) and after each task you run pass_milestone() method to tell Time::ETA
 object that you have completed part of your process.
 
 Any time in you programme you can use methods to understand what is going on
-and how soon the process will finish. That are methods
+and how soon the process will finish. That are methods is_completed(),
 get_completed_percent(), get_elapsed_seconds(), get_remaining_seconds().
 
 This module has build-in feature for serialisation. You can run method
