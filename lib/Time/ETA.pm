@@ -57,7 +57,7 @@ use YAML;
 my $true = 1;
 my $false = '';
 
-my $serialization_api_version = 1;
+our $SERIALIZATION_API_VERSION = 2;
 
 =head1 METHODS
 
@@ -304,10 +304,11 @@ sub serialize {
     my ($self) = @_;
 
     my $data = {
-        _version => $serialization_api_version,
+        _version => $SERIALIZATION_API_VERSION,
         _milestones => $self->{_milestones},
         _passed_milestones => $self->{_passed_milestones},
         _start  => $self->{_start},
+        _end  => $self->{_end},
     };
 
     my $string = Dump($data);
@@ -349,8 +350,8 @@ sub spawn {
 
     croak "Can't spawn object. Serialized data does not contain version. Stopped" if not defined $data->{_version};
 
-    croak "Can't spawn object. Version $Time::ETA::VERSION can work only with serialized data version $serialization_api_version. Stopped"
-        if $data->{_version} ne $serialization_api_version;
+    croak "Can't spawn object. Version $Time::ETA::VERSION can work only with serialized data version $SERIALIZATION_API_VERSION. Stopped"
+        if $data->{_version} ne $SERIALIZATION_API_VERSION;
 
     croak "Can't spawn object. Serialized data contains incorrect number of milestones. Stopped"
         if not _is_positive_integer(undef, $data->{_milestones});
@@ -358,24 +359,47 @@ sub spawn {
     croak "Can't spawn object. Serialized data contains incorrect number of passed milestones. Stopped"
         if not _is_positive_integer_or_zero(undef, $data->{_passed_milestones});
 
-    croak "Can't spawn object. Serialized data contains incorrect data for start time. Stopped"
-        if ref $data->{_start} ne "ARRAY";
+    _check_gettimeofday(
+        undef,
+        value => $data->{_start},
+        name => "start time"
+    );
 
-    croak "Can't spawn object. Serialized data contains incorrect seconds in start time. Stopped"
-        if not _is_positive_integer_or_zero(undef, $data->{_start}->[0]);
-
-    croak "Can't spawn object. Serialized data contains incorrect microseconds in start time. Stopped"
-        if not _is_positive_integer_or_zero(undef, $data->{_start}->[1]);
+    if (defined $data->{_end}) {
+        _check_gettimeofday(
+            undef,
+            value => $data->{_end},
+            name => "end time"
+        );
+    }
 
     my $self = {
         _milestones => $data->{_milestones},
         _passed_milestones => $data->{_passed_milestones},
         _start  => $data->{_start},
+        _end  => $data->{_end},
     };
 
     bless $self, $class;
 
     return $self;
+}
+
+sub _check_gettimeofday {
+    my ($self, %params) = @_;
+
+    croak "Expected to get 'name'" unless defined $params{name};
+
+    croak "Can't spawn object. Serialized data contains incorrect data for $params{name}. Stopped"
+        if ref $params{value} ne "ARRAY";
+
+    croak "Can't spawn object. Serialized data contains incorrect seconds in $params{name}. Stopped"
+        if not _is_positive_integer_or_zero(undef, $params{value}->[0]);
+
+    croak "Can't spawn object. Serialized data contains incorrect microseconds in $params{name}. Stopped"
+        if not _is_positive_integer_or_zero(undef, $params{value}->[1]);
+
+    return $false;
 }
 
 sub _is_positive_integer_or_zero {

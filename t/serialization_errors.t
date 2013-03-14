@@ -99,7 +99,7 @@ _version: 1044
     my $string = "---
 _milestones: -3
 _passed_milestones: 4
-_version: 1
+_version: $Time::ETA::SERIALIZATION_API_VERSION
 ";
 
     eval {
@@ -120,7 +120,7 @@ _version: 1
     my $string = "---
 _milestones: 186
 _passed_milestones: asdf
-_version: 1
+_version: $Time::ETA::SERIALIZATION_API_VERSION
 ";
 
     eval {
@@ -141,7 +141,7 @@ _version: 1
     my $string = "---
 _milestones: 186
 _passed_milestones: asdf
-_version: 1
+_version: $Time::ETA::SERIALIZATION_API_VERSION
 ";
 
     eval {
@@ -162,7 +162,7 @@ _version: 1
     my $string = "---
 _milestones: 186
 _passed_milestones: 10
-_version: 1
+_version: $Time::ETA::SERIALIZATION_API_VERSION
 ";
 
     my $eta;
@@ -183,7 +183,7 @@ _version: 1
     my $string = "---
 _milestones: 186
 _passed_milestones: 10
-_version: 1
+_version: $Time::ETA::SERIALIZATION_API_VERSION
 _start:
   - mememe
   - 631816
@@ -207,7 +207,7 @@ _start:
     my $string = "---
 _milestones: 186
 _passed_milestones: 10
-_version: 1
+_version: $Time::ETA::SERIALIZATION_API_VERSION
 _start:
   - 1362672010
   - -934
