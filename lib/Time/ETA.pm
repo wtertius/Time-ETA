@@ -109,12 +109,21 @@ Method return number of seconds that have passed from object creation time.
 It can output something like 1.35024 and it means that a bit more than one
 second have passed from the moment the new() constructor has executed.
 
+If the process is finished this method will return process run time in
+seconds.
+
 =cut
 
 sub get_elapsed_seconds {
     my ($self) = @_;
 
-    my $elapsed_seconds = tv_interval($self->{_start}, [gettimeofday]);
+    my $elapsed_seconds;
+
+    if ($self->is_completed()) {
+        $elapsed_seconds = tv_interval($self->{_start}, $self->{_end});
+    } else {
+        $elapsed_seconds = tv_interval($self->{_start}, [gettimeofday]);
+    }
 
     return $elapsed_seconds;
 }
@@ -230,6 +239,11 @@ sub pass_milestone {
     } else {
         croak "You have already completed all milestones. It it incorrect to run pass_milestone() now. Stopped";
     }
+
+    if ($self->{_passed_milestones} == $self->{_milestones}) {
+        $self->{_end} = [gettimeofday];
+    }
+
     return $false;
 }
 
