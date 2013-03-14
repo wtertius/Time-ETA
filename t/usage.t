@@ -8,7 +8,7 @@ use Time::ETA;
 use Time::HiRes qw(usleep gettimeofday tv_interval);
 use Test::More;
 
-my $precision = 0.01;
+my $precision = 0.1;
 
 my $tests = [
     {
