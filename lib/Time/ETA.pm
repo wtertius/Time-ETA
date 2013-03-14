@@ -182,6 +182,27 @@ sub get_completed_percent {
     return $completed_percent;
 }
 
+=head2 is_completed
+
+B<Get:> 1) $self
+
+B<Return:> 1) $boolean - true value if the process is completed or false value
+if the process is running.
+
+You can also use get_completed_percent() to find our how much of the process
+is finished.
+
+=cut
+
+sub is_completed {
+    my ($self) = @_;
+
+    return ($self->{_passed_milestones} == $self->{_milestones})
+        ? $true
+        : $false
+        ;
+}
+
 =head2 pass_milestone
 
 B<Get:> 1) $self
