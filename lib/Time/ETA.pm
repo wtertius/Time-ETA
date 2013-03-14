@@ -140,6 +140,8 @@ is run for the first time. AFter pass_milestone() run at least once,
 get_remaining_seconds() has enouth data to caluate ETA. To find out if ETA can
 be calculated you can use method can_calculate_eta().
 
+If the process is finished this method will return 0.
+
 =cut
 
 sub get_remaining_seconds {
@@ -250,6 +252,9 @@ no data to calculate ETA.
     if ( $eta->can_calculate_eta() ) {
         print $eta->get_remaining_seconds();
     }
+
+When the process is complete can_calculate_eta() returns true value, but
+get_remaining_seconds() return 0.
 
 =cut
 
