@@ -184,8 +184,8 @@ have been passed.
 
     $eta->get_completed_percent();
 
-For example, if one milestone from 12 have been completed it will print
-8.33333333333333
+For example, if one milestone from 12 have been completed the method will
+return 8.33333333333333
 
 =cut
 
