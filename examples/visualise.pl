@@ -99,18 +99,18 @@ sub output_object_info {
 
         my $format_for_result;
         if ($m->{type} eq 'number' and defined $formated_result) {
-            $format_for_result = " {>>.<<<<<<<<<<<}";
+            $format_for_result = "    {>>.<<<<<<<<<<<}";
         } elsif ($m->{type} eq 'number' and not defined $formated_result) {
-            $format_for_result = "{<<<<<<<<<<<<<<}";
+            $format_for_result = "   {<<<<<<<<<<<<<<}";
         } elsif ($m->{type} eq 'bool') {
-            $format_for_result = "{<<<<<<<<<<<<<<}";
+            $format_for_result = "{>>>>>>>>>>>>>>}";
         } elsif ($m->{type} eq 'percent') {
-            $format_for_result = "{>>}";
+            $format_for_result = "   {>>}";
         } else {
             croak "Unknown format";
         }
 
-        print form "  {<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<} {<<} $format_for_result",
+        print form "  {<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<} {<<} $format_for_result",
             "$spacer$method_name()",
             "=",
             $formated_result
