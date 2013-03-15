@@ -2,3 +2,14 @@ Revision history for Time::ETA
 
 0.01    2013-03-07
         * First public release
+        * Internal serialization api version 1
+
+0.02    2013-03-15
+        * Fixed get_remaining_seconds()
+        * Fixed get_elapsed_seconds()
+        * Changed internal serialization api to version 2
+        * New method is_completed()
+        * New example script with run visualization
+        * Added README
+        * Additions in POD
+        * Additions in tests
