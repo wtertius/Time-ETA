@@ -158,11 +158,15 @@ sub get_remaining_seconds {
 
     croak "There is not enough data to calculate estimated time of accomplishment. Stopped" if not $self->can_calculate_eta();
 
-    my $elapsed_seconds = $self->get_elapsed_seconds();
+    return 0 if $self->is_completed();
+
+    my $elapsed_before_milestone = tv_interval($self->{_start}, $self->{_miliestone_pass});
+    my $elapsed_after_milestone = tv_interval($self->{_miliestone_pass}, [gettimeofday()]);
+
     my $remaining_milestones = $self->{_milestones} - $self->{_passed_milestones};
 
-    my $one_milestone_completion_time = $elapsed_seconds/$self->{_passed_milestones};
-    my $remaining_seconds = $one_milestone_completion_time * $remaining_milestones;
+    my $one_milestone_completion_time = $elapsed_before_milestone/$self->{_passed_milestones};
+    my $remaining_seconds = ($one_milestone_completion_time * $remaining_milestones) - $elapsed_after_milestone;
 
     return $remaining_seconds;
 }
@@ -240,8 +244,12 @@ sub pass_milestone {
         croak "You have already completed all milestones. It it incorrect to run pass_milestone() now. Stopped";
     }
 
+    my $dt = [gettimeofday];
+
+    $self->{_miliestone_pass} = $dt;
+
     if ($self->{_passed_milestones} == $self->{_milestones}) {
-        $self->{_end} = [gettimeofday];
+        $self->{_end} = $dt;
     }
 
     return $false;
@@ -308,6 +316,7 @@ sub serialize {
         _milestones => $self->{_milestones},
         _passed_milestones => $self->{_passed_milestones},
         _start  => $self->{_start},
+        _miliestone_pass => $self->{_miliestone_pass},
         _end  => $self->{_end},
     };
 
@@ -373,10 +382,19 @@ sub spawn {
         );
     }
 
+    if (defined $data->{_miliestone_pass}) {
+        _check_gettimeofday(
+            undef,
+            value => $data->{_miliestone_pass},
+            name => "last milestone pass time"
+        );
+    }
+
     my $self = {
         _milestones => $data->{_milestones},
         _passed_milestones => $data->{_passed_milestones},
         _start  => $data->{_start},
+        _miliestone_pass => $data->{_miliestone_pass},
         _end  => $data->{_end},
     };
 

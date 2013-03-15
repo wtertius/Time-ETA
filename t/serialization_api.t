@@ -46,7 +46,8 @@ _version: 1
 # The difference from version 1:
 #
 #  * when the process is finished the field "_end" appear
-#
+#  * after every pass_milestone() in the object _miliestone_pass gets the
+#    current time (and _miliestone_pass is stored in serialized object)
 {
 
     my ($seconds, $microseconds) = gettimeofday;
@@ -58,6 +59,9 @@ _milestones: 10
 _passed_milestones: 4
 _start:
   - $seconds_in_the_past
+  - $microseconds
+_miliestone_pass:
+  - $seconds
   - $microseconds
 _version: 2
 ";
