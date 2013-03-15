@@ -1,8 +1,11 @@
 use strict;
 use warnings;
 
-use Time::ETA;
 use Test::More;
+use Time::ETA;
+use Time::HiRes qw(
+    gettimeofday
+);
 
 my $true = 1;
 my $false = '';
@@ -60,6 +63,42 @@ foreach my $test (@{$tests}) {
 
     is(Time::ETA::_is_positive_integer_or_zero(undef, $test->{value}), $test->{pz}, "_is_positive_integer_or_zero($value)");
     is(Time::ETA::_is_positive_integer(undef, $test->{value}), $test->{p}, "_is_positive_integer($value)");
+
+}
+
+my $gettimeofday_tests = [
+    {
+        value => [gettimeofday()],
+        name => undef,
+        correct => $false,  # no name
+    },
+    {
+        value => [gettimeofday()],
+        name => 'start time',
+        correct => $true,
+    },
+];
+
+foreach my $test (@{$gettimeofday_tests}) {
+
+    my $result;
+    eval {
+        $result = Time::ETA::_check_gettimeofday(
+            undef,
+            name => $test->{name},
+            value => $test->{value},
+        );
+    };
+
+    if ($test->{correct}) {
+        is($@, "", "_check_gettimeofday() run successfully");
+    } else {
+        like(
+            $@,
+            qr/Expected to get 'name'/,
+            "_check_gettimeofday() fail on error",
+        );
+    }
 
 }
 
