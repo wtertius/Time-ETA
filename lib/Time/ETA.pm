@@ -338,6 +338,9 @@ serialized object data and creates an object.
 
 The $string is created by the method serialized().
 
+spawn() die if $string is incorrect. You can check if it is possible to
+respawn object from a $string with the method can_cpawn().
+
 =cut
 
 sub spawn {
@@ -401,6 +404,35 @@ sub spawn {
     bless $self, $class;
 
     return $self;
+}
+
+=head2 can_spawn
+
+B<Get:> 1) $class 2) $string with serialized object
+
+B<Return:> 1) $bool - true value if it is possible to recreate object from
+serialized $string, otherwise false value
+
+    my $can_spawn = Time::ETA->can_spawn($string);
+
+Methos spawn() that is used to create object from the serialized $string dies
+in case the $string is incorrect. This method is added to the object to simply
+the check process.
+
+=cut
+
+sub can_spawn {
+    my ($class, $string) = @_;
+
+    eval {
+        my $eta = spawn($class, $string);
+    };
+
+    if (not $@) {
+        return $true;
+    } else {
+        return $false;
+    }
 }
 
 sub _check_gettimeofday {

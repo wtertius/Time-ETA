@@ -4,6 +4,16 @@ use warnings;
 use Test::More;
 use Time::ETA;
 
+sub test_can_cpawn {
+    my ($string) = @_;
+
+    my $result = Time::ETA->can_spawn($string);
+
+    ok(not($result), "can_spawn() return false");
+
+    return '';
+}
+
 # no string
 {
     eval {
@@ -15,6 +25,8 @@ use Time::ETA;
         qr/Can't spawn Time::ETA object\. No serialized data specified\./,
         "spawn() does not work without serialized string",
     );
+
+    test_can_cpawn();
 }
 
 # incorrect string
@@ -32,6 +44,7 @@ use Time::ETA;
         "spawn() does not work incorrect serialized string",
     );
 
+    test_can_cpawn($string);
 }
 
 # incorrect string
@@ -50,6 +63,7 @@ use Time::ETA;
         "spawn() does not work incorrect serialized string",
     );
 
+    test_can_cpawn($string);
 }
 
 # no version
@@ -70,6 +84,7 @@ _passed_milestones: 4
         "spawn() does not work without serialized api version",
     );
 
+    test_can_cpawn($string);
 }
 
 # incorrect version
@@ -91,6 +106,7 @@ _version: 1044
         "spawn() works only with some serialized api versions",
     );
 
+    test_can_cpawn($string);
 }
 
 # incorrect milestones
@@ -112,6 +128,7 @@ _version: $Time::ETA::SERIALIZATION_API_VERSION
         "spawn() works only with correct number of milestones",
     );
 
+    test_can_cpawn($string);
 }
 
 # incorrect passed milestones
@@ -133,6 +150,7 @@ _version: $Time::ETA::SERIALIZATION_API_VERSION
         "spawn() works only with correct number of passed milestones",
     );
 
+    test_can_cpawn($string);
 }
 
 # incorrect passed milestones
@@ -154,6 +172,7 @@ _version: $Time::ETA::SERIALIZATION_API_VERSION
         "spawn() works only with correct number of passed milestones",
     );
 
+    test_can_cpawn($string);
 }
 
 # no start time info
@@ -175,6 +194,8 @@ _version: $Time::ETA::SERIALIZATION_API_VERSION
         qr/Can't spawn Time::ETA object\. Serialized data contains incorrect data for start time/,
         "spawn() works only with correct start time info",
     );
+
+    test_can_cpawn($string);
 }
 
 # incorrect seconds in start time info
@@ -199,6 +220,8 @@ _start:
         qr/Can't spawn Time::ETA object\. Serialized data contains incorrect seconds in start time/,
         "spawn() works only with correct start time info",
     );
+
+    test_can_cpawn($string);
 }
 
 # incorrect microseconds in start time info
@@ -223,6 +246,8 @@ _start:
         qr/Can't spawn Time::ETA object\. Serialized data contains incorrect microseconds in start time/,
         "spawn() works only with correct start time info",
     );
+
+    test_can_cpawn($string);
 }
 
 done_testing();
