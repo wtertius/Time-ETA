@@ -343,7 +343,7 @@ The $string is created by the method serialized().
 sub spawn {
     my ($class, $string) = @_;
 
-    croak "Can't spawn object. No serialized data specified. Stopped" if not defined $string;
+    croak "Can't spawn Time::ETA object. No serialized data specified. Stopped" if not defined $string;
 
     my $data;
 
@@ -352,20 +352,20 @@ sub spawn {
     };
 
     if ($@) {
-        croak "Can't spawn object. Got error from YAML parser:\n" . $@ . "Stopped";
+        croak "Can't spawn Time::ETA object. Got error from YAML parser:\n" . $@ . "Stopped";
     }
 
-    croak "Can't spawn object. Got incorrect serialized data. Stopped" if ref $data ne "HASH";
+    croak "Can't spawn Time::ETA object. Got incorrect serialized data. Stopped" if ref $data ne "HASH";
 
-    croak "Can't spawn object. Serialized data does not contain version. Stopped" if not defined $data->{_version};
+    croak "Can't spawn Time::ETA object. Serialized data does not contain version. Stopped" if not defined $data->{_version};
 
-    croak "Can't spawn object. Version $Time::ETA::VERSION can work only with serialized data version $SERIALIZATION_API_VERSION. Stopped"
+    croak "Can't spawn Time::ETA object. Version $Time::ETA::VERSION can work only with serialized data version $SERIALIZATION_API_VERSION. Stopped"
         if $data->{_version} ne $SERIALIZATION_API_VERSION;
 
-    croak "Can't spawn object. Serialized data contains incorrect number of milestones. Stopped"
+    croak "Can't spawn Time::ETA object. Serialized data contains incorrect number of milestones. Stopped"
         if not _is_positive_integer(undef, $data->{_milestones});
 
-    croak "Can't spawn object. Serialized data contains incorrect number of passed milestones. Stopped"
+    croak "Can't spawn Time::ETA object. Serialized data contains incorrect number of passed milestones. Stopped"
         if not _is_positive_integer_or_zero(undef, $data->{_passed_milestones});
 
     _check_gettimeofday(
@@ -408,13 +408,13 @@ sub _check_gettimeofday {
 
     croak "Expected to get 'name'" unless defined $params{name};
 
-    croak "Can't spawn object. Serialized data contains incorrect data for $params{name}. Stopped"
+    croak "Can't spawn Time::ETA object. Serialized data contains incorrect data for $params{name}. Stopped"
         if ref $params{value} ne "ARRAY";
 
-    croak "Can't spawn object. Serialized data contains incorrect seconds in $params{name}. Stopped"
+    croak "Can't spawn Time::ETA object. Serialized data contains incorrect seconds in $params{name}. Stopped"
         if not _is_positive_integer_or_zero(undef, $params{value}->[0]);
 
-    croak "Can't spawn object. Serialized data contains incorrect microseconds in $params{name}. Stopped"
+    croak "Can't spawn Time::ETA object. Serialized data contains incorrect microseconds in $params{name}. Stopped"
         if not _is_positive_integer_or_zero(undef, $params{value}->[1]);
 
     return $false;

@@ -35,7 +35,7 @@ _version: 1
 
     like(
         $@,
-        qr/Can't spawn object\. Version .* can work only with serialized data version 2\./,
+        qr/Can't spawn Time::ETA object\. Version .* can work only with serialized data version 2\./,
         "spawn() does not support serialization api version 1.",
     );
 
