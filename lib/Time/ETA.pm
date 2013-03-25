@@ -149,6 +149,10 @@ is run for the first time. AFter pass_milestone() run at least once,
 get_remaining_seconds() has enouth data to caluate ETA. To find out if ETA can
 be calculated you can use method can_calculate_eta().
 
+There is one more method that you can use to get information about remaining
+time. The method is called get_remaining_time(). It return the time in format
+"H:MM:SS" and works exaclty as this method.
+
 If the process is finished this method will return 0.
 
 =cut
@@ -169,6 +173,36 @@ sub get_remaining_seconds {
     my $remaining_seconds = ($one_milestone_completion_time * $remaining_milestones) - $elapsed_after_milestone;
 
     return $remaining_seconds;
+}
+
+=head2 get_remaining_time
+
+B<Get:> 1) $self
+
+B<Return:> 1) $text_time - scalar with the text representation of remaing
+time.
+
+Method return estimated time in the form "H:MM:SS". For example it can return
+"12:04:44", it means that the process is expected to finish in 12 hours, 4
+minutes and 44 seconds.
+
+This method returns the same number as get_remaining_seconds(), but in format
+that is easy for humans to understand.
+
+Method words the same as get_remaining_seconds(). In case it is not possible
+to calulate remaining time the method will die. You can use method
+can_calculate_eta() to find out if it is possible to get remaing time.
+
+If the process is finished this method will return "0:00:00".
+
+=cut
+
+sub get_remaining_time {
+    my ($self) = @_;
+
+    my $time = $self->_get_time_from_seconds($self->get_remaining_seconds());
+
+    return $time;
 }
 
 =head2 get_completed_percent
@@ -477,6 +511,32 @@ sub _is_positive_integer {
     return $false if $maybe_number eq '+0';
 
     return _is_positive_integer_or_zero(undef, $maybe_number);
+}
+
+sub _get_time_from_seconds {
+    my ($self, $input_sec) = @_;
+
+    my $text;
+    {
+        # This is a quick solution. This like make code more robust.
+        # With this like the code will fail if $input_sec is not a number.
+        use warnings FATAL => 'all';
+
+        my $left_sec;
+        my $hour = int($input_sec/3600);
+        $left_sec = $input_sec - ($hour * 3600);
+
+        my $min = int($left_sec/60);
+        $left_sec = $left_sec - ($min * 60);
+
+        $text =
+            sprintf("%01d", $hour) . ":"
+            . sprintf("%02d", $min) . ":"
+            . sprintf("%02d", $left_sec)
+            ;
+    }
+
+    return $text;
 }
 
 =head1 SEE ALSO

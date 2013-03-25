@@ -244,6 +244,12 @@ sub check_completed_object {
             "In $name completed object get_remaining_seconds() return 0",
         );
 
+        is(
+            $eta->get_remaining_time(),
+            "0:00:00",
+            "In $name completed object get_remaining_time() return '0:00:00'",
+        );
+
         my $elapsed_seconds = $eta->get_elapsed_seconds();
         ok(
             abs(
