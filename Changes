@@ -13,3 +13,11 @@ Revision history for Time::ETA
         * Added README
         * Additions in POD
         * Additions in tests
+
+0.03    2013-03-25
+        * New method get_remaining_time()
+        * New method can_cpawn()
+        * More frienly error message when it is not possible to spawn
+        * Small fix in pod
+        * Added .travis.yml
+        * Dist::Zilla will not allow releasing with dirty git
