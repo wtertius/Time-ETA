@@ -21,3 +21,14 @@ Revision history for Time::ETA
         * Small fix in pod
         * Added .travis.yml
         * Dist::Zilla will not allow releasing with dirty git
+
+1.0.0   2013-09-01
+        [Major]
+        * Using SemVer for version numbers
+
+        [Patch]
+        * Added Perl 5.8 to be checked by Travis CI
+        * Fixing travis
+        * Removed test that checked that I have written Changes
+        * Using BESSARABV Dist::Zilla plugin bundle
+        * Fixing misspell in README
