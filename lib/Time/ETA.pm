@@ -41,6 +41,9 @@ This module has build-in feature for serialisation. You can run method
 serialize() to get the text string with the object state. And you can restore
 your object from that string with spawn() method.
 
+Time::ETA version numbers uses Semantic Versioning standart.
+Please visit L<http://semver.org/> to find out all about this great thing.
+
 =cut
 
 use warnings;
