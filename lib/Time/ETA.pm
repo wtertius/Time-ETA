@@ -453,8 +453,8 @@ serialized $string, otherwise false value
     my $can_spawn = Time::ETA->can_spawn($string);
 
 Methos spawn() that is used to create object from the serialized $string dies
-in case the $string is incorrect. This method is added to the object to simply
-the check process.
+in case the $string is incorrect. This method is added to the object to
+simplify the check process.
 
 =cut
 
