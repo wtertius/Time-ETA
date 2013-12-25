@@ -35,7 +35,7 @@ _version: 1
 
     like(
         $@,
-        qr/Can't spawn Time::ETA object\. Version .* can work only with serialized data version 2\./,
+        qr/Can't spawn Time::ETA object\. Version .* can work only with serialized data version 3\./,
         "spawn() does not support serialization api version 1.",
     );
 
@@ -68,6 +68,45 @@ _miliestone_pass:
 _version: 2
 ";
 
+    my $eta;
+    eval {
+        $eta = Time::ETA->spawn($string);
+    };
+
+    like(
+        $@,
+        qr/Can't spawn Time::ETA object\. Version .* can work only with serialized data version 3\./,
+        "spawn() does not support serialization api version 2.",
+    );
+}
+
+=head2 check_serialization_api_v_3
+
+The difference from version 2:
+
+ * Added _paused and _paused_milestones mandatory private class members.
+
+=cut
+
+sub check_serialization_api_v_3 {
+    my ($seconds, $microseconds) = gettimeofday;
+
+    my $seconds_in_the_past = $seconds - 4;
+
+    my $string = "---
+_milestones: 10
+_passed_milestones: 4
+_paused: ''
+_paused_milestones: 0
+_start:
+  - $seconds_in_the_past
+  - $microseconds
+_milestone_pass:
+  - $seconds
+  - $microseconds
+_version: 3
+";
+
     my $eta = Time::ETA->spawn($string);
 
     my $percent = $eta->get_completed_percent();
@@ -80,6 +119,7 @@ _version: 2
 sub main {
     check_serialization_api_v_1();
     check_serialization_api_v_2();
+    check_serialization_api_v_3();
 
     done_testing();
 }
