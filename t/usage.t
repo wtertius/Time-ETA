@@ -12,6 +12,11 @@ use Time::HiRes qw(
 );
 use Test::More;
 
+use Time::ETA::MockTime;
+
+no warnings 'redefine';
+*Time::ETA::gettimeofday = \&Time::ETA::MockTime::gettimeofday;
+
 # global vars
 my $true = 1;
 my $false = '';
