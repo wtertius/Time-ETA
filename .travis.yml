@@ -1,6 +1,6 @@
 language: perl
 install: cpanm --notest Test::Whitespaces Time::HiRes Capture::Tiny
-script: prove -l xt t
+script: prove -l t xt/author
 perl:
   - "5.8"
   - "5.10"
