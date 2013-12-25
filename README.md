@@ -39,6 +39,10 @@ There was some discussions on perlmonks:
  * [Module to calculate ETA][1]
  * [Best way to store object in db][2]
 
+And some discussions on stackoverflow:
+
+ * [How to mock Perl module Time::HiRes][6]
+
 And I use play-perl.org to work on this module:
 
  * [Ask on perlmonks.org on CPAN module that should be used for ETA][3]
@@ -50,3 +54,4 @@ And I use play-perl.org to work on this module:
  [3]: http://play-perl.org/quest/5130de1020d03f6c12000082
  [4]: http://play-perl.org/quest/513637e4e645b62c36000025
  [5]: http://play-perl.org/quest/51420983805e06c61100004d
+ [6]: http://stackoverflow.com/questions/17962280/how-to-mock-perl-module-timehires
