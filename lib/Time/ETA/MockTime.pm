@@ -2,9 +2,9 @@ package Time::ETA::MockTime;
 
 # ABSTRACT: make it possible to test time
 
-=head1 SYNOPSIS
-
 =head1 DESCRIPTION
+
+This is an internal thing that is used only in testing Perl module Time::ETA.
 
 =cut
 
