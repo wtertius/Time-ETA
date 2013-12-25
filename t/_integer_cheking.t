@@ -10,96 +10,81 @@ use Time::HiRes qw(
 my $true = 1;
 my $false = '';
 
-=begin comment $tests format
+=head1 get_tests
 
-my $tests [
-    {
-        value => undef,
-        pz => $false,    # what should _is_positive_integer_or_zero() return
-        p => $false,     # what should _is_positive_integer() return
-    },
+Returns array with hashes:
 
-
-=end comment
+    (
+        {
+            value => undef,
+            pz => $false,    # what should _is_positive_integer_or_zero() return
+            p => $false,     # what should _is_positive_integer() return
+        },
+        ...
+    )
 
 =cut
 
-my $tests = [
-    {
-        value => undef,
-        pz => $false,
-        p => $false,
-    },
-    {
-        value => 'mememe',
-        pz => $false,
-        p => $false,
-    },
-    {
-        value => -3,
-        pz => $false,
-        p => $false,
-    },
-    {
-        value => 0,
-        pz => $true,
-        p => $false,
-    },
-    {
-        value => 1,
-        pz => $true,
-        p => $true,
-    },
-    {
-        value => 1.2,
-        pz => $false,
-        p => $false,
-    },
-];
+sub get_tests {
 
-foreach my $test (@{$tests}) {
+    my @tests = (
+        {
+            value => undef,
+            pz => $false,
+            p => $false,
+        },
+        {
+            value => 'mememe',
+            pz => $false,
+            p => $false,
+        },
+        {
+            value => -3,
+            pz => $false,
+            p => $false,
+        },
+        {
+            value => 0,
+            pz => $true,
+            p => $false,
+        },
+        {
+            value => 1,
+            pz => $true,
+            p => $true,
+        },
+        {
+            value => 1.2,
+            pz => $false,
+            p => $false,
+        },
+    );
 
-    my $value = defined $test->{value} ? $test->{value} : '';
-
-    is(Time::ETA::_is_positive_integer_or_zero(undef, $test->{value}), $test->{pz}, "_is_positive_integer_or_zero($value)");
-    is(Time::ETA::_is_positive_integer(undef, $test->{value}), $test->{p}, "_is_positive_integer($value)");
-
+    return @tests;
 }
 
-my $gettimeofday_tests = [
-    {
-        value => [gettimeofday()],
-        name => undef,
-        correct => $false,  # no name
-    },
-    {
-        value => [gettimeofday()],
-        name => 'start time',
-        correct => $true,
-    },
-];
+sub check_sub_is_positive_integer_or_zero {
+    foreach my $test (get_tests()) {
 
-foreach my $test (@{$gettimeofday_tests}) {
+        my $value = defined $test->{value} ? $test->{value} : '';
 
-    my $result;
-    eval {
-        $result = Time::ETA::_check_gettimeofday(
-            undef,
-            name => $test->{name},
-            value => $test->{value},
-        );
-    };
-
-    if ($test->{correct}) {
-        is($@, "", "_check_gettimeofday() run successfully");
-    } else {
-        like(
-            $@,
-            qr/Expected to get 'name'/,
-            "_check_gettimeofday() fail on error",
-        );
+        is(Time::ETA::_is_positive_integer_or_zero(undef, $test->{value}), $test->{pz}, "_is_positive_integer_or_zero($value)");
     }
-
 }
 
-done_testing();
+sub check_sub_is_positive_integer {
+    foreach my $test (get_tests()) {
+
+        my $value = defined $test->{value} ? $test->{value} : '';
+
+        is(Time::ETA::_is_positive_integer(undef, $test->{value}), $test->{p}, "_is_positive_integer($value)");
+    }
+}
+
+sub main {
+    check_sub_is_positive_integer_or_zero();
+    check_sub_is_positive_integer();
+    done_testing();
+}
+
+main ();
