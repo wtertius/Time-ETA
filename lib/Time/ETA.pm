@@ -345,12 +345,16 @@ calculate estimated time after resuming.
 The current algorithm calculates remaining time only on the base of
 milestones that passed after resuming.
 
+Method dies in case the object is already paused.
+
     $eta->pause();
 
 =cut
 
 sub pause {
     my ($self) = @_;
+
+    croak "The object is already paused. Can't pause paused. Stopped" if $self->is_paused();
 
     $self->{_paused} = $true;
     $self->{_paused_milestones} = $self->{_passed_milestones};
