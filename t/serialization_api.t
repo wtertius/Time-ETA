@@ -10,11 +10,11 @@ my $false = '';
 
 my $precision = 0.1;
 
-ok(1, "Loaded ok");
+=head1 check_serialization_api_v_1
 
-# Serialization api version 1
-{
+=cut
 
+sub check_serialization_api_v_1 {
     my ($seconds, $microseconds) = gettimeofday;
 
     my $seconds_in_the_past = $seconds - 4;
@@ -41,15 +41,17 @@ _version: 1
 
 }
 
-# Serialization api version 2
-#
-# The difference from version 1:
-#
-#  * when the process is finished the field "_end" appear
-#  * after every pass_milestone() in the object _miliestone_pass gets the
-#    current time (and _miliestone_pass is stored in serialized object)
-{
+=head2 check_serialization_api_v_2
 
+The difference from version 1:
+
+ * when the process is finished the field "_end" appear
+ * after every pass_milestone() in the object _miliestone_pass gets the
+   current time (and _miliestone_pass is stored in serialized object)
+
+=cut
+
+sub check_serialization_api_v_2 {
     my ($seconds, $microseconds) = gettimeofday;
 
     my $seconds_in_the_past = $seconds - 4;
@@ -66,7 +68,6 @@ _miliestone_pass:
 _version: 2
 ";
 
-
     my $eta = Time::ETA->spawn($string);
 
     my $percent = $eta->get_completed_percent();
@@ -74,7 +75,13 @@ _version: 2
 
     is($percent, 40, "Got expected percent from respawned object");
     cmp_ok(abs($secs-6), "<", $precision, "Got expected remaining seconds from respawned object");
-
 }
 
-done_testing();
+sub main {
+    check_serialization_api_v_1();
+    check_serialization_api_v_2();
+
+    done_testing();
+}
+
+main();

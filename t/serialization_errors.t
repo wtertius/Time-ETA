@@ -4,7 +4,7 @@ use warnings;
 use Test::More;
 use Time::ETA;
 
-sub test_can_cpawn {
+sub test_sub_can_spawn_return_false {
     my ($string) = @_;
 
     my $result = Time::ETA->can_spawn($string);
@@ -14,8 +14,7 @@ sub test_can_cpawn {
     return '';
 }
 
-# no string
-{
+sub check_no_string {
     eval {
         my $eta = Time::ETA->spawn();
     };
@@ -26,11 +25,10 @@ sub test_can_cpawn {
         "spawn() does not work without serialized string",
     );
 
-    test_can_cpawn();
+    test_sub_can_spawn_return_false();
 }
 
-# incorrect string
-{
+sub check_not_yaml {
 
     my $string = "incorrect";
 
@@ -44,11 +42,10 @@ sub test_can_cpawn {
         "spawn() does not work incorrect serialized string",
     );
 
-    test_can_cpawn($string);
+    test_sub_can_spawn_return_false($string);
 }
 
-# incorrect string
-{
+sub check_incorrect_data {
 
     my $string = "--- []
 ";
@@ -63,12 +60,10 @@ sub test_can_cpawn {
         "spawn() does not work incorrect serialized string",
     );
 
-    test_can_cpawn($string);
+    test_sub_can_spawn_return_false($string);
 }
 
-# no version
-{
-
+sub check_no_version {
     my $string = "---
 _milestones: 10
 _passed_milestones: 4
@@ -84,11 +79,10 @@ _passed_milestones: 4
         "spawn() does not work without serialized api version",
     );
 
-    test_can_cpawn($string);
+    test_sub_can_spawn_return_false($string);
 }
 
-# incorrect version
-{
+sub check_incorrect_version {
 
     my $string = "---
 _milestones: 10
@@ -106,11 +100,10 @@ _version: 1044
         "spawn() works only with some serialized api versions",
     );
 
-    test_can_cpawn($string);
+    test_sub_can_spawn_return_false($string);
 }
 
-# incorrect milestones
-{
+sub check_incorrect_milestones {
 
     my $string = "---
 _milestones: -3
@@ -128,12 +121,10 @@ _version: $Time::ETA::SERIALIZATION_API_VERSION
         "spawn() works only with correct number of milestones",
     );
 
-    test_can_cpawn($string);
+    test_sub_can_spawn_return_false($string);
 }
 
-# incorrect passed milestones
-{
-
+sub check_incorrect_passed_milestones {
     my $string = "---
 _milestones: 186
 _passed_milestones: asdf
@@ -150,34 +141,10 @@ _version: $Time::ETA::SERIALIZATION_API_VERSION
         "spawn() works only with correct number of passed milestones",
     );
 
-    test_can_cpawn($string);
+    test_sub_can_spawn_return_false($string);
 }
 
-# incorrect passed milestones
-{
-
-    my $string = "---
-_milestones: 186
-_passed_milestones: asdf
-_version: $Time::ETA::SERIALIZATION_API_VERSION
-";
-
-    eval {
-        my $eta = Time::ETA->spawn($string);
-    };
-
-    like(
-        $@,
-        qr/Can't spawn Time::ETA object\. Serialized data contains incorrect number of passed milestones/,
-        "spawn() works only with correct number of passed milestones",
-    );
-
-    test_can_cpawn($string);
-}
-
-# no start time info
-{
-
+sub check_no_start_time_info {
     my $string = "---
 _milestones: 186
 _passed_milestones: 10
@@ -195,12 +162,10 @@ _version: $Time::ETA::SERIALIZATION_API_VERSION
         "spawn() works only with correct start time info",
     );
 
-    test_can_cpawn($string);
+    test_sub_can_spawn_return_false($string);
 }
 
-# incorrect seconds in start time info
-{
-
+sub check_incorrect_seconds_in_start_time_info {
     my $string = "---
 _milestones: 186
 _passed_milestones: 10
@@ -221,12 +186,10 @@ _start:
         "spawn() works only with correct start time info",
     );
 
-    test_can_cpawn($string);
+    test_sub_can_spawn_return_false($string);
 }
 
-# incorrect microseconds in start time info
-{
-
+sub check_incorrect_microseconds_in_start_time_info {
     my $string = "---
 _milestones: 186
 _passed_milestones: 10
@@ -247,7 +210,22 @@ _start:
         "spawn() works only with correct start time info",
     );
 
-    test_can_cpawn($string);
+    test_sub_can_spawn_return_false($string);
 }
 
-done_testing();
+sub main {
+    check_no_string();
+    check_not_yaml();
+    check_incorrect_data();
+    check_no_version();
+    check_incorrect_version();
+    check_incorrect_milestones();
+    check_incorrect_passed_milestones();
+    check_no_start_time_info();
+    check_incorrect_seconds_in_start_time_info();
+    check_incorrect_microseconds_in_start_time_info();
+
+    done_testing();
+}
+
+main();
