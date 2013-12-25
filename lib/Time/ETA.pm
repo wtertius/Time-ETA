@@ -408,7 +408,7 @@ than the method dies.
 sub resume {
     my ($self, $string) = @_;
 
-    croak "The isn't paused. Can't resume. Stopped" if not $self->is_paused();
+    croak "The object isn't paused. Can't resume. Stopped" if not $self->is_paused();
 
     $self->{_start} = [gettimeofday];
     $self->{_paused} = $false;
