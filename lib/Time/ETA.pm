@@ -399,7 +399,8 @@ sub spawn {
 
     croak "Can't spawn Time::ETA object. Serialized data does not contain version. Stopped" if not defined $data->{_version};
 
-    croak "Can't spawn Time::ETA object. Version $Time::ETA::VERSION can work only with serialized data version $SERIALIZATION_API_VERSION. Stopped"
+    my $v = _get_version();
+    croak "Can't spawn Time::ETA object. Version $v can work only with serialized data version $SERIALIZATION_API_VERSION. Stopped"
         if $data->{_version} ne $SERIALIZATION_API_VERSION;
 
     croak "Can't spawn Time::ETA object. Serialized data contains incorrect number of milestones. Stopped"
@@ -540,6 +541,21 @@ sub _get_time_from_seconds {
     }
 
     return $text;
+}
+
+=begin comment _get_version
+
+To fix problem 'Use of uninitialized value $Time::ETA::VERSION' when working
+with code that is not build with Dist::Zilla.
+
+=end comment
+
+=cut
+
+sub _get_version {
+    my $v = $Time::ETA::VERSION;
+    $v = 'dev' if not defined $v;
+    return $v;
 }
 
 =head1 SEE ALSO

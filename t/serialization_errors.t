@@ -94,9 +94,11 @@ _version: 1044
         my $eta = Time::ETA->spawn($string);
     };
 
+    my $v = Time::ETA::_get_version();
+
     like(
         $@,
-        qr/Can't spawn Time::ETA object\. Version $Time::ETA::VERSION can work only with serialized data version/,
+        qr/Can't spawn Time::ETA object\. Version $v can work only with serialized data version/,
         "spawn() works only with some serialized api versions",
     );
 
