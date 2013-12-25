@@ -192,7 +192,7 @@ minutes and 44 seconds.
 This method returns the same number as get_remaining_seconds(), but in format
 that is easy for humans to understand.
 
-Method words the same as get_remaining_seconds(). In case it is not possible
+Method works the same as get_remaining_seconds(). In case it is not possible
 to calulate remaining time the method will die. You can use method
 can_calculate_eta() to find out if it is possible to get remaing time.
 
