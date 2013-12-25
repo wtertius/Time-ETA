@@ -11,20 +11,13 @@ BEGIN {
 }
 
 use Capture::Tiny qw(capture_merged);
+use Time::ETA::MockTime;
 
 my $true = 1;
 my $false = '';
 
 sub do_work {
     sleep 1;
-}
-
-sub fix {
-    my ($content) = @_;
-
-    $content =~ s/(\d+)\.00\d+/$1.00/g;
-
-    return $content;
 }
 
 sub sample_from_pod {
@@ -47,26 +40,27 @@ sub sample_from_pod {
 }
 
 sub check_sample_from_pod {
+
+    no warnings 'redefine';
+    *Time::ETA::gettimeofday = \&Time::ETA::MockTime::gettimeofday;
+
     my $output = capture_merged {
         sample_from_pod();
     };
 
-    my $expected_output = "Will work 11.001887 seconds more
-Will work 10.002564 seconds more
-Will work 9.002363 seconds more
-Will work 8.002022 seconds more
-Will work 7.0017386 seconds more
-Will work 6.001466 seconds more
-Will work 5.00116571428572 seconds more
-Will work 4.000922 seconds more
-Will work 3.00067333333333 seconds more
-Will work 2.0004268 seconds more
-Will work 1.00016927272727 seconds more
+    my $expected_output = "Will work 11 seconds more
+Will work 10 seconds more
+Will work 9 seconds more
+Will work 8 seconds more
+Will work 7 seconds more
+Will work 6 seconds more
+Will work 5 seconds more
+Will work 4 seconds more
+Will work 3 seconds more
+Will work 2 seconds more
+Will work 1 seconds more
 Will work 0 seconds more
 ";
-
-    $output = fix($output);
-    $expected_output = fix($expected_output);
 
     eq_or_diff(
         $output,
