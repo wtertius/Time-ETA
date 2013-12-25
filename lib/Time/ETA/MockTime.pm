@@ -39,7 +39,7 @@ sub sleep {
 
 =cut
 
-sub usleep {
+sub usleep ($) {
     my ($microseconds) = @_;
 
     croak "Incorrect microseconds" if $microseconds !~ /^[0-9]+$/;
