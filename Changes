@@ -32,3 +32,13 @@ Revision history for Time::ETA
         * Removed test that checked that I have written Changes
         * Using BESSARABV Dist::Zilla plugin bundle
         * Fixing misspell in README
+
+1.0.1   2013-12-26
+        [Patch]
+        * Using mocked time in tests
+        * Fixing xt tests in Travis CI
+        * Test refactoring
+        * Fixed warnings in tests
+        * Added one more test
+        * renamed: README -> README.md
+        * Added link to stackoverflow discussions to README.md
