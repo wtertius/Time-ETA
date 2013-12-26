@@ -677,6 +677,14 @@ sub _get_version {
 
 =back
 
+=head1 CONTRIBUTORS
+
+=over 4
+
+=item * Dmitry Lukiyanchuk
+
+=back
+
 =head1 SOURCE CODE
 
 The source code for this module and scripts is hosted on GitHub
