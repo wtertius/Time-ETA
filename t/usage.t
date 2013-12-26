@@ -104,7 +104,10 @@ sub check_fresh_object {
     croak "Expected to get 'start_time'" unless defined $params{start_time};
 
     my $original_eta = $params{original};
-    my $respawned_eta = Time::ETA->spawn($original_eta->serialize());
+
+    my $data = $original_eta->serialize();
+    ok(Time::ETA->can_spawn($data), 'can_spawn() return true');
+    my $respawned_eta = Time::ETA->spawn($data);
 
     foreach my $name ("original", "respawned") {
         my $eta;

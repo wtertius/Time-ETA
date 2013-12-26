@@ -650,8 +650,8 @@ with code that is not build with Dist::Zilla.
 =cut
 
 sub _get_version {
-    my $v = $Time::ETA::VERSION;
-    $v = 'dev' if not defined $v;
+    no warnings 'uninitialized';
+    my $v = "$Time::ETA::VERSION";
     return $v;
 }
 
