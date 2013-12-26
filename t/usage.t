@@ -75,8 +75,12 @@ sub compare_objects {
     }
 
     foreach my $method (@inprecise_immutable_methods) {
-        next if $method eq "get_remaining_seconds"
-            and $params{passed_milestones} - ($params{stop_at} // 0) == 0;
+        $params{stop_at} = 0 if not defined $params{stop_at};
+
+        if($method eq "get_remaining_seconds") {
+            next if $params{passed_milestones} == 0;
+            next if ( ($params{passed_milestones} - $params{stop_at})  == 0 );
+        }
 
         my $diff = $params{original}->$method()
             - $params{respawned}->$method();
