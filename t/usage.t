@@ -47,6 +47,7 @@ my @precise_immutable_methods = qw(
     get_completed_percent
     is_completed
     can_calculate_eta
+    is_paused
 );
 
 my @inprecise_immutable_methods = qw(
