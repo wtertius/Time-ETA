@@ -515,11 +515,13 @@ sub spawn {
     croak "Can't spawn Time::ETA object. Serialized data contains incorrect number of passed milestones. Stopped"
         if not _is_positive_integer_or_zero(undef, $data->{_passed_milestones});
 
-    _check_gettimeofday(
-        undef,
-        value => $data->{_start},
-        name => "start time"
-    );
+    if (not $data->{_is_paused}) {
+        _check_gettimeofday(
+            undef,
+            value => $data->{_start},
+            name => "start time"
+        );
+    }
 
     if (defined $data->{_end}) {
         _check_gettimeofday(
