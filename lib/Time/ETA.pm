@@ -150,8 +150,7 @@ precise is the prediction.
 
 This method will die in case it haven't got enough information to calculate
 estimated time of accomplishment. The method will die untill pass_milestone()
-is run for the first time. After pass_milestone() run at least once after
-start or after resuming (in dependence of what has been happen later),
+is run for the first time. After pass_milestone() run at least once,
 get_remaining_seconds() has enouth data to caluate ETA. To find out if ETA can
 be calculated you can use method can_calculate_eta().
 
@@ -306,8 +305,7 @@ This method returns bool value that gives information if there is enough
 data in the object to calculate process estimated time of accomplishment.
 
 It will return true value if method pass_milestone() have been run at least
-once after start or after resuming (in dependence of what has been happen later),
-if the method pass_milestone() haven't been run it will return false.
+once, if the method pass_milestone() haven't been run it will return false.
 
 This method is used to check if it is safe to run method
 get_remaining_seconds(). Method get_remaining_seconds() dies in case there is
@@ -338,12 +336,7 @@ B<Get:> 1) $self
 
 B<Return:> it returns nothing that can be used
 
-This method tells the object that execution of the task have been paused
-(i. e. it was interrupted). The knowledge is required to correctly
-calculate estimated time after resuming.
-
-The current algorithm calculates remaining time only on the base of
-milestones that passed after resuming.
+This method tells the object that execution of the task have been paused.
 
 Method dies in case the object is already paused.
 
@@ -371,8 +364,7 @@ B<Get:> 1) $self
 
 B<Return:> $boolean
 
-This method returns bool value that gives information if the object is paused
-and can be resumed.
+This method returns bool value that gives information if the object is paused.
 
 It will return true if method pause() has been run and no resume() method
 was run after that. Otherwise it will return false.
@@ -399,16 +391,9 @@ B<Get:> 1) $self
 B<Return:> it returns nothing that can be used
 
 This method tells the object that execution of the task is continued
-after pause. The knowledge is required to correctly
-calculate estimated time.
+after pause.
 
-The current algorithm calculates remaining time only on the base of
-milestones that passed after resuming.
-
-    $eta->resume() if $eta->is_paused();
-
-If the eta is not paused and therefore the resuming is imposible,
-than the method dies.
+If the object is not paused the method dies.
 
 =cut
 
