@@ -56,11 +56,20 @@ sub usleep ($) {
 
 =cut
 
-
 sub gettimeofday () {
     if (@mocked_time) {
         return wantarray ? @mocked_time : "$mocked_time[0].$mocked_time[1]";
     }
+}
+
+=head1 set_mock_time
+=cut
+
+sub set_mock_time  {
+    my ($sec, $ms) = @_;
+
+    $mocked_time[0] = $sec;
+    $mocked_time[1] = $ms;
 }
 
 1;
