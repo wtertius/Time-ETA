@@ -96,7 +96,7 @@ sub new {
     $self->{_passed_milestones} = 0;
     $self->{_elapsed} = 0;
     $self->{_start} = [gettimeofday];
-    $self->{_paused} = $false;
+    $self->{_is_paused} = $false;
 
     return $self;
 }
@@ -360,7 +360,7 @@ sub pause {
     $self->{_elapsed} += $elapsed_seconds;
     $self->{_start} = undef;
 
-    $self->{_paused} = $true;
+    $self->{_is_paused} = $true;
 
     return $false;
 }
@@ -389,7 +389,7 @@ Method resume() dies in the case the object is not paused.
 sub is_paused {
     my ($self) = @_;
 
-    return $self->{_paused};
+    return $self->{_is_paused};
 }
 
 =head2 resume
@@ -426,7 +426,7 @@ sub resume {
     $self->{_start}->[1] -= $decimal * 1_000_000;
 
     $self->{_elapsed} = 0;
-    $self->{_paused} = $false;
+    $self->{_is_paused} = $false;
 
     return $false;
 }
@@ -459,7 +459,7 @@ sub serialize {
         _start  => $self->{_start},
         _milestone_pass => $self->{_milestone_pass},
         _end  => $self->{_end},
-        _paused => $self->{_paused},
+        _is_paused => $self->{_is_paused},
         _elapsed => $self->{_elapsed},
     };
 
@@ -543,7 +543,7 @@ sub spawn {
         _start  => $data->{_start},
         _milestone_pass => $data->{_milestone_pass},
         _end  => $data->{_end},
-        _paused => $data->{_paused},
+        _is_paused => $data->{_is_paused},
         _elapsed => $data->{_elapsed},
     };
 
