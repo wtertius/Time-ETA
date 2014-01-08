@@ -94,6 +94,7 @@ sub new {
 
     $self->{_milestones} = $params{milestones};
     $self->{_passed_milestones} = 0;
+    $self->{_elapsed} = 0;
     $self->{_start} = [gettimeofday];
     $self->{_paused} = $false;
     $self->{_paused_milestones} = 0;
@@ -125,9 +126,9 @@ sub get_elapsed_seconds {
     my $elapsed_seconds;
 
     if ($self->is_completed()) {
-        $elapsed_seconds = tv_interval($self->{_start}, $self->{_end});
+        $elapsed_seconds = tv_interval($self->{_start}, $self->{_end}) + $self->{_elapsed};
     } else {
-        $elapsed_seconds = tv_interval($self->{_start}, [gettimeofday]);
+        $elapsed_seconds = tv_interval($self->{_start}, [gettimeofday]) + $self->{_elapsed};
     }
 
     return $elapsed_seconds;
@@ -356,6 +357,9 @@ sub pause {
 
     croak "The object is already paused. Can't pause paused. Stopped" if $self->is_paused();
 
+    my $elapsed_seconds = tv_interval($self->{_start}, [gettimeofday]);
+    $self->{_elapsed} += $elapsed_seconds;
+
     $self->{_paused} = $true;
     $self->{_paused_milestones} = $self->{_passed_milestones};
 
@@ -450,6 +454,7 @@ sub serialize {
         _end  => $self->{_end},
         _paused => $self->{_paused},
         _paused_milestones => $self->{_paused_milestones},
+        _elapsed => $self->{_elapsed},
     };
 
     my $string = Dump($data);
@@ -534,6 +539,7 @@ sub spawn {
         _end  => $data->{_end},
         _paused => $data->{_paused},
         _paused_milestones => $data->{_paused_milestones},
+        _elapsed => $data->{_elapsed},
     };
 
     bless $self, $class;
