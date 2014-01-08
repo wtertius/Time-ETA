@@ -84,7 +84,7 @@ _version: 2
 
 The difference from version 2:
 
- * Added _paused and _paused_milestones mandatory private class members.
+ * Added _is_paused and _elapsed.
 
 =cut
 
@@ -96,8 +96,8 @@ sub check_serialization_api_v_3 {
     my $string = "---
 _milestones: 10
 _passed_milestones: 4
-_paused: ''
-_paused_milestones: 0
+_elapsed: 0
+_is_paused: ''
 _start:
   - $seconds_in_the_past
   - $microseconds
