@@ -97,7 +97,6 @@ sub new {
     $self->{_elapsed} = 0;
     $self->{_start} = [gettimeofday];
     $self->{_paused} = $false;
-    $self->{_paused_milestones} = 0;
 
     return $self;
 }
@@ -126,9 +125,9 @@ sub get_elapsed_seconds {
     my $elapsed_seconds;
 
     if ($self->is_completed()) {
-        $elapsed_seconds = tv_interval($self->{_start}, $self->{_end}) + $self->{_elapsed};
+        $elapsed_seconds = tv_interval($self->{_start}, $self->{_end});
     } else {
-        $elapsed_seconds = tv_interval($self->{_start}, [gettimeofday]) + $self->{_elapsed};
+        $elapsed_seconds = tv_interval($self->{_start}, [gettimeofday]);
     }
 
     return $elapsed_seconds;
@@ -176,7 +175,7 @@ sub get_remaining_seconds {
 
     my $remaining_milestones = $self->{_milestones} - $self->{_passed_milestones};
 
-    my $one_milestone_completion_time = $elapsed_before_milestone/($self->{_passed_milestones} - $self->{_paused_milestones});
+    my $one_milestone_completion_time = $elapsed_before_milestone/$self->{_passed_milestones};
     my $remaining_seconds = ($one_milestone_completion_time * $remaining_milestones) - $elapsed_after_milestone;
 
     return $remaining_seconds;
@@ -326,7 +325,7 @@ get_remaining_seconds() return 0.
 sub can_calculate_eta {
     my ($self) = @_;
 
-    if (($self->{_passed_milestones} - $self->{_paused_milestones}) > 0) {
+    if ($self->{_passed_milestones} > 0) {
         return $true;
     } else {
         return $false;
@@ -359,9 +358,9 @@ sub pause {
 
     my $elapsed_seconds = tv_interval($self->{_start}, [gettimeofday]);
     $self->{_elapsed} += $elapsed_seconds;
+    $self->{_start} = undef;
 
     $self->{_paused} = $true;
-    $self->{_paused_milestones} = $self->{_passed_milestones};
 
     return $false;
 }
@@ -418,7 +417,15 @@ sub resume {
 
     croak "The object isn't paused. Can't resume. Stopped" if not $self->is_paused();
 
+    # Setting the start time
+    # Start time is the current time minus time that has already pass
     $self->{_start} = [gettimeofday];
+    my $integer = int($self->{_elapsed});
+    my $decimal = sprintf("%.6f", ($self->{_elapsed} - $integer));
+    $self->{_start}->[0] -= $integer;
+    $self->{_start}->[1] -= $decimal * 1_000_000;
+
+    $self->{_elapsed} = 0;
     $self->{_paused} = $false;
 
     return $false;
@@ -453,7 +460,6 @@ sub serialize {
         _milestone_pass => $self->{_milestone_pass},
         _end  => $self->{_end},
         _paused => $self->{_paused},
-        _paused_milestones => $self->{_paused_milestones},
         _elapsed => $self->{_elapsed},
     };
 
@@ -538,7 +544,6 @@ sub spawn {
         _milestone_pass => $data->{_milestone_pass},
         _end  => $data->{_end},
         _paused => $data->{_paused},
-        _paused_milestones => $data->{_paused_milestones},
         _elapsed => $data->{_elapsed},
     };
 
