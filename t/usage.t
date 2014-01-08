@@ -14,15 +14,12 @@ use Test::More;
 
 use Time::ETA::MockTime;
 
-no warnings 'redefine';
-*Time::ETA::gettimeofday = \&Time::ETA::MockTime::gettimeofday;
-
 # global vars
 my $true = 1;
 my $false = '';
 
 my $precision = 0.1;
-my $microseconds = 1000000;
+my $microseconds = 1_000_000;
 
 my $tests = [
     {
@@ -32,11 +29,6 @@ my $tests = [
     {
         count => 5,
         sleep_time => 0.75 * $microseconds,
-    },
-    {
-        count => 7,
-        sleep_time => 0.75 * $microseconds,
-        stop_at => 2,
     },
 ];
 
@@ -76,11 +68,8 @@ sub compare_objects {
     }
 
     foreach my $method (@inprecise_immutable_methods) {
-        $params{stop_at} = 0 if not defined $params{stop_at};
-
         if($method eq "get_remaining_seconds") {
             next if $params{passed_milestones} == 0;
-            next if ( ($params{passed_milestones} - $params{stop_at})  == 0 );
         }
 
         my $diff = $params{original}->$method()
@@ -167,8 +156,6 @@ sub check_object_in_progress {
     croak "Expected to get 'done'" unless defined $params{done};
     croak "Expected to get 'milestones'" unless defined $params{milestones};
 
-    $params{stop_at} = 0 if !defined($params{stop_at}) || $params{stop_at} >= $params{done};
-
     my $original_eta = $params{original};
     my $respawned_eta = Time::ETA->spawn($original_eta->serialize());
 
@@ -203,17 +190,18 @@ sub check_object_in_progress {
         my $number_of_tasks_left = $params{milestones} - $params{done};
         my $current_time = [gettimeofday()];
         my $estimated_time = $number_of_tasks_left
-            * ( tv_interval($params{start_time}, $current_time) / ($params{done} - $params{stop_at}) );
+            * ( tv_interval($params{start_time}, $current_time) / $params{done});
         ok(
             abs($remaining_seconds - $estimated_time) < $precision,
             "In $name object after $params{done} milestones got correct remainig time $remaining_seconds"
         );
 
         my $elapsed_seconds = $eta->get_elapsed_seconds();
-        ok(
-            abs(
-                tv_interval($params{start_time}, $current_time) - $elapsed_seconds
-            ) < $precision,
+        my $elapsed_addition = 0;
+
+        is(
+            tv_interval($params{start_time}, $current_time),
+            $elapsed_seconds,
             "In $name object after $params{done} milestones got correct elapsed seconds $elapsed_seconds"
         );
 
@@ -270,11 +258,11 @@ sub check_completed_object {
             "In $name completed object get_remaining_time() return '0:00:00'",
         );
 
+# TODO bes
         my $elapsed_seconds = $eta->get_elapsed_seconds();
-        ok(
-            abs(
-                tv_interval($params{start_time}, $params{end_time}) - $elapsed_seconds
-            ) < $precision,
+        is(
+            tv_interval($params{start_time}, $params{end_time}),
+            $elapsed_seconds,
             "In $name completed object got correct elapsed seconds $elapsed_seconds"
         );
 
@@ -292,6 +280,9 @@ sub check_completed_object {
 
 # main
 sub main {
+    no warnings 'redefine';
+    *Time::ETA::gettimeofday = \&Time::ETA::MockTime::gettimeofday;
+
     ok($true, "Loaded ok");
 
     foreach my $test (@{$tests}) {
@@ -331,30 +322,7 @@ sub main {
                     start_time => $start_time,
                     done => $i,
                     milestones => $test->{count},
-                    stop_at => $test->{stop_at},
                 );
-            }
-
-            if (exists($test->{stop_at}) && $test->{stop_at} == $i) {
-                $original_eta->pause();
-
-                ok(!$original_eta->can_calculate_eta(), "In object just after pause can_calculate_eta() return false");
-                compare_objects(
-                    original => $original_eta,
-                    respawned  => Time::ETA->spawn($original_eta->serialize()),
-                    passed_milestones => $i,
-                    stop_at => $test->{stop_at},
-                );
-
-                usleep $test->{sleep_time} * 1.3;
-
-                ok($original_eta->is_paused(), "In object after pause is_paused() return true");
-
-                $original_eta->resume();
-                $start_time = [gettimeofday()];
-
-                ok(!$original_eta->is_paused(), "In object after resume is_paused() return false");
-                ok(!$original_eta->can_calculate_eta(), "In object after resume can_calculate_eta() return false");
             }
         }
 
