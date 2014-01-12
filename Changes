@@ -42,3 +42,7 @@ Revision history for Time::ETA
         * Added one more test
         * renamed: README -> README.md
         * Added link to stackoverflow discussions to README.md
+
+1.1.0   2014-01-12
+        [Minor]
+        * Added methods to pause task execution progress
