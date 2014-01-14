@@ -24,6 +24,11 @@ our @EXPORT = @EXPORT_OK;
 our @mocked_time = Time::HiRes::gettimeofday();
 my $microseconds_in_second = 1_000_000;
 
+{
+    no warnings 'redefine';
+    *Time::ETA::gettimeofday = \&Time::ETA::MockTime::gettimeofday;
+}
+
 =head1 sleep
 
 =cut

@@ -8,9 +8,6 @@ use Time::ETA;
 use Time::ETA::MockTime;
 
 sub main {
-    no warnings 'redefine';
-    *Time::ETA::gettimeofday = \&Time::ETA::MockTime::gettimeofday;
-
     my $eta = Time::ETA->new(
         milestones => 2,
     );

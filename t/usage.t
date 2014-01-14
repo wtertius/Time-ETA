@@ -280,9 +280,6 @@ sub check_completed_object {
 
 # main
 sub main {
-    no warnings 'redefine';
-    *Time::ETA::gettimeofday = \&Time::ETA::MockTime::gettimeofday;
-
     ok($true, "Loaded ok");
 
     foreach my $test (@{$tests}) {

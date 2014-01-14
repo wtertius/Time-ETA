@@ -17,10 +17,6 @@ my $true = 1;
 my $false = '';
 
 sub main {
-
-    no warnings 'redefine';
-    *Time::ETA::gettimeofday = \&Time::ETA::MockTime::gettimeofday;
-
     Time::ETA::MockTime::set_mock_time(1389200452, 619014);
 
     my $eta = Time::ETA->new(
