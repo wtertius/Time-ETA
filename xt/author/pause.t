@@ -45,9 +45,6 @@ sub run_check {
 sub check {
     my (%params) = @_;
 
-    no warnings 'redefine';
-    *Time::ETA::gettimeofday = \&Time::ETA::MockTime::gettimeofday;
-
     my $output = capture_merged {
         run_check(
             with_pause => $params{with_pause},

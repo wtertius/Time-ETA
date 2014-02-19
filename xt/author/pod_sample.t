@@ -36,9 +36,6 @@ sub sample_from_pod {
 
 sub check_sample_from_pod {
 
-    no warnings 'redefine';
-    *Time::ETA::gettimeofday = \&Time::ETA::MockTime::gettimeofday;
-
     my $output = capture_merged {
         sample_from_pod();
     };
