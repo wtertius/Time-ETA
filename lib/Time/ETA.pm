@@ -679,7 +679,7 @@ sub _get_version {
 
 =over 4
 
-=item * Dmitry Lukiyanchuk
+=item * Dmitry Lukiyanchuk (WTERTIUS)
 
 =back
 
