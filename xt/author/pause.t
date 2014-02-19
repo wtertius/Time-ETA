@@ -3,12 +3,7 @@
 use strict;
 use warnings FATAL => 'all';
 use Test::More;
-
-BEGIN {
-    if (!eval q{ use Test::Differences; 1 }) {
-        *eq_or_diff = \&is_deeply;
-    }
-}
+use Test::Differences;
 
 use Carp;
 use Capture::Tiny qw(capture_merged);
