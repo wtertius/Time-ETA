@@ -671,6 +671,8 @@ sub _get_version {
 
 =item L<Time::Progress>
 
+=item L<http://blogs.perl.org/users/steven_haryanto/2014/02/getting-a-progress-report-from-a-running-program.html>
+
 =back
 
 =head1 CONTRIBUTORS
